@@ -50,10 +50,6 @@ public class RocketRetrieval extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		boxDebug.render(world, camera.combined.scl(scalefactor));
 		rocketSprite.begin();
-		/*rocketSprite.draw(rocketTexture,rocket.getPosition().x*scalefactor,rocket.getPosition().y*scalefactor,
-				rocket.getPosition().x/2*scalefactor,rocket.getPosition().y/2*scalefactor,
-				10,100,1,1,(float)Math.toDegrees(rocket.getAngle()),0,0,rocketTexture.getWidth(),rocketTexture.getHeight(),
-				false,false);*/
 		rocketSprite.draw(rocketTexture,(float)(rocket.getPosition().x*scalefactor-5.2),rocket.getPosition().y*scalefactor-50,
 				(float)5.2,50,
 				10,100,1,1,(float)Math.toDegrees(rocket.getAngle()),0,0,rocketTexture.getWidth(),rocketTexture.getHeight(),
@@ -101,18 +97,27 @@ public class RocketRetrieval extends ApplicationAdapter {
 
 		rocket.applyTorque(torqCalc(),true);
 		rocket.setLinearVelocity(0,verticalForce*6);
-		rocket.setAngularVelocity((float)(-horizontalForce*1.6));
+		rocket.setAngularVelocity((float)(-horizontalForce*1.5));
 	}
 
 	public float torqCalc() {
 		//physics stuff goes here
 		float angle = rocket.getAngle();
 		float forceCalc = (float)(400*Math.sin(angle));
+		float rocketP = 275*rocket.getAngularVelocity();
+		if(rocket.getAngle()>2*Math.PI){
 
+			angle = (float)(angle/(2*Math.PI));
+		}
+		//System.out.println(rocket.getAngle());
 
+		if(rocket.getAngle()>=.8||rocket.getAngle()<=-.8){
 
-		return forceCalc;
+			return forceCalc+rocketP;
+		}else {
 
+			return forceCalc;
+		}
 	}
 
 	public void cameraUpdater(float delta){
@@ -172,5 +177,6 @@ public class RocketRetrieval extends ApplicationAdapter {
 		boxDebug.dispose();
 		world.dispose();
 		rocketSprite.dispose();
+		rocketTexture.dispose();
 	}
 }
