@@ -84,6 +84,7 @@ public class RocketRetrieval extends ApplicationAdapter {
 	public void inputUpdater(float delta){
 		int horizontalForce=0;
 		int verticalForce=0;
+		float rocketP = rocket.getInertia()*rocket.getAngularVelocity();
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 			for(int i = 0; i<=10;i++) {
 				horizontalForce += 1;
@@ -108,19 +109,8 @@ public class RocketRetrieval extends ApplicationAdapter {
 		}
 		Vector2 thrust = new Vector2((float)(-verticalForce*2*(Math.sin(Math.toRadians(getRocketAngle2())))),
 				(float)(verticalForce*2*Math.cos(Math.toRadians(getRocketAngle()))));
-		//rocket.applyTorque(torqCalc(),true); //torque due to gravity
-		//rocket.setLinearVelocity(0,verticalForce*6);
-
 		rocket.applyForce(thrust, rocket.getWorldCenter(),true);
-		//System.out.println(Math.cos(Math.toRadians(getRocketAngle())));
-		//System.out.println(Math.cos(Math.toRadians(getRocketAngle())));
-		//rocket.applyForceToCenter(0,verticalForce*3,true);
-		/*
-		rocket.applyForce(new Vector2((float)(verticalForce*Math.sin(rocketAngle)),(float)(verticalForce*Math.cos(rocketAngle))),new Vector2((float)(rocket.getPosition().x/scalefactor+10),
-				rocket.getPosition().y/scalefactor-25),false);*/
-		/*rocket.applyForce(new Vector2((float)((verticalForce*Math.sin((rocket.getAngle()))*5)),(float)((verticalForce*Math.cos((rocket.getAngle()))*5)))
-				,new Vector2((float)(rocket.getPosition().x/scalefactor+9.5),rocket.getPosition().y/scalefactor-25),false);*/
-		rocket.applyTorque((float)(-horizontalForce*8),true);
+		rocket.applyTorque((float)(-horizontalForce*16)-rocketP,true);
 		//System.out.println(rocket.getWorldCenter());
 	}
 
