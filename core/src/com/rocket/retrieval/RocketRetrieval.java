@@ -34,7 +34,7 @@ public class RocketRetrieval extends ApplicationAdapter {
 		float h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, w/2,h/2);
-		world = new World(new Vector2(0,-200f),false);
+		world = new World(new Vector2(0,-10f),false);
 		boxDebug = new Box2DDebugRenderer();
 		rocket = createPlayer();
 		platform = createPlatform();
@@ -54,7 +54,6 @@ public class RocketRetrieval extends ApplicationAdapter {
 				(float)5.2,50,
 				10,100,1,1,(float)Math.toDegrees(rocket.getAngle()),0,0,rocketTexture.getWidth(),rocketTexture.getHeight(),
 				false,false);
-		//System.out.println(rocket.getPosition().y);
 		rocketSprite.end();
 
 	}
@@ -68,57 +67,65 @@ public class RocketRetrieval extends ApplicationAdapter {
 
 	}
 
+	public int getRocketAngle() {
+		int rocketAngle = (int)(Math.toDegrees(rocket.getAngle())%360);
+
+		return Math.abs(rocketAngle);
+
+	}
+
+	public int getRocketAngle2(){
+		int rocketAngle = (int)(Math.toDegrees(rocket.getAngle())%360);
+		return rocketAngle;
+
+
+	}
+
 	public void inputUpdater(float delta){
 		int horizontalForce=0;
 		int verticalForce=0;
-		Vector2 forceVector = new Vector2(0,-50);
-		Vector2 positionVector = new Vector2(rocket.getPosition().x,rocket.getPosition().y+20);
-
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+			for(int i = 0; i<=10;i++) {
+				horizontalForce += 1;
 
-			horizontalForce+=1;
+			}
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+			for(int i = 0;i<=10;i++) {
+				horizontalForce -= 1;
 
-			horizontalForce-=1;
+			}
 		}
 
 		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 
-			verticalForce+=1;
+			for(int i =0;i<=100;i++) {
+
+				verticalForce += 1;
+			}
 
 		}
+		Vector2 thrust = new Vector2((float)(-verticalForce*2*(Math.sin(Math.toRadians(getRocketAngle2())))),
+				(float)(verticalForce*2*Math.cos(Math.toRadians(getRocketAngle()))));
+		//rocket.applyTorque(torqCalc(),true); //torque due to gravity
+		//rocket.setLinearVelocity(0,verticalForce*6);
 
-		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-
-			verticalForce-=1;
-		}
-
-		rocket.applyTorque(torqCalc(),true);
-		rocket.setLinearVelocity(0,verticalForce*6);
-		rocket.setAngularVelocity((float)(-horizontalForce*1.5));
+		rocket.applyForce(thrust, rocket.getWorldCenter(),true);
+		//System.out.println(Math.cos(Math.toRadians(getRocketAngle())));
+		//System.out.println(Math.cos(Math.toRadians(getRocketAngle())));
+		//rocket.applyForceToCenter(0,verticalForce*3,true);
+		/*
+		rocket.applyForce(new Vector2((float)(verticalForce*Math.sin(rocketAngle)),(float)(verticalForce*Math.cos(rocketAngle))),new Vector2((float)(rocket.getPosition().x/scalefactor+10),
+				rocket.getPosition().y/scalefactor-25),false);*/
+		/*rocket.applyForce(new Vector2((float)((verticalForce*Math.sin((rocket.getAngle()))*5)),(float)((verticalForce*Math.cos((rocket.getAngle()))*5)))
+				,new Vector2((float)(rocket.getPosition().x/scalefactor+9.5),rocket.getPosition().y/scalefactor-25),false);*/
+		rocket.applyTorque((float)(-horizontalForce*8),true);
+		//System.out.println(rocket.getWorldCenter());
 	}
 
-	public float torqCalc() {
-		//physics stuff goes here
-		float angle = rocket.getAngle();
-		float forceCalc = (float)(400*Math.sin(angle));
-		float rocketP = 275*rocket.getAngularVelocity();
-		if(rocket.getAngle()>2*Math.PI){
 
-			angle = (float)(angle/(2*Math.PI));
-		}
-		//System.out.println(rocket.getAngle());
 
-		if(rocket.getAngle()>=.8||rocket.getAngle()<=-.8){
-
-			return forceCalc+rocketP;
-		}else {
-
-			return forceCalc;
-		}
-	}
 
 	public void cameraUpdater(float delta){
 
@@ -149,7 +156,7 @@ public class RocketRetrieval extends ApplicationAdapter {
 
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(8/scalefactor,55/scalefactor);
-		player.createFixture(shape,3.0f);
+		player.createFixture(shape,5.0f);
 		return player;
 
 	}
@@ -163,7 +170,7 @@ public class RocketRetrieval extends ApplicationAdapter {
 		define.fixedRotation=true;
 		platform = world.createBody(define);
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(400/scalefactor,6/scalefactor);
+		shape.setAsBox(600/scalefactor,6/scalefactor);
 		platform.createFixture(shape,0.0f);
 
 		return platform;
