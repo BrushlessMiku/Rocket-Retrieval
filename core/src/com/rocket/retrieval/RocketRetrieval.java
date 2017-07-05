@@ -11,40 +11,49 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.rocket.retrieval.GameManager.GameStateManager;
+import javafx.application.Application;
 
 import javax.xml.soap.Text;
 
 public class RocketRetrieval extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
 
+
+	private SpriteBatch batch;
+	private Texture img;
 	private OrthographicCamera camera;
 	private World world;
 	private Body rocket;
 	private Body platform;
+	private Body pylon;
 	private Box2DDebugRenderer boxDebug;
 	private SpriteBatch rocketSprite;
 	private Texture rocketTexture;
 	private float scalefactor = 32;
+	private GameStateManager gsm;
 	@Override
 	public void create () {
-		//batch = new SpriteBatch();
-		//img = new Texture("badlogic.jpg");
+		batch = new SpriteBatch();
+		gsm = new GameStateManager(this);
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, w/2,h/2);
-		world = new World(new Vector2(0,-10f),false);
-		boxDebug = new Box2DDebugRenderer();
-		rocket = createPlayer();
-		platform = createPlatform();
-		rocketSprite = new SpriteBatch();
-		rocketTexture = new Texture("falcon9-render.png");
+		camera.setToOrtho(false, w,h);
+		//world = new World(new Vector2(0,-10f),false);
+		//boxDebug = new Box2DDebugRenderer();
+		//rocket = createPlayer();
+		//platform = createPlatform();
+		//pylon = createPylon();
+		//rocketSprite = new SpriteBatch();
+		//rocketTexture = new Texture("falcon9-render.png");
 
 	}
 
 	@Override
 	public void render () {
+		gsm.update(Gdx.graphics.getDeltaTime());
+		gsm.render();
+		/*
 		update(Gdx.graphics.getDeltaTime());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -55,14 +64,21 @@ public class RocketRetrieval extends ApplicationAdapter {
 				10,100,1,1,(float)Math.toDegrees(rocket.getAngle()),0,0,rocketTexture.getWidth(),rocketTexture.getHeight(),
 				false,false);
 		rocketSprite.end();
+		*/
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+
+			Gdx.app.exit();
+		}
 
 	}
 
 	public void update(float delta){
+		/*
 		world.step(1/60f,5,2);
 		cameraUpdater(delta);
 		inputUpdater(delta);
 		rocketSprite.setProjectionMatrix(camera.combined);
+		*/
 
 
 	}
@@ -127,11 +143,11 @@ public class RocketRetrieval extends ApplicationAdapter {
 
 		}
 
+
 	@Override
-
-	public void resize(int width, int height){
-
-		camera.setToOrtho(false, width/2,height/2);
+	public void resize(int w, int h){
+		//camera.setToOrtho(false,w/2,h/2);
+		gsm.resize(w,h);
 	}
 
 	public Body createPlayer(){
@@ -151,6 +167,23 @@ public class RocketRetrieval extends ApplicationAdapter {
 
 	}
 
+	public Body createPylon(){
+
+		Body pylon;
+		BodyDef define = new BodyDef();
+		define.type=BodyDef.BodyType.DynamicBody;
+		define.position.set(rocket.getPosition().x,rocket.getPosition().y);
+		define.fixedRotation=false;
+		pylon = world.createBody(define);
+
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(2/scalefactor, 10/scalefactor);
+		pylon.createFixture(shape,1.0f);
+
+		return pylon;
+
+	}
+
 	public Body createPlatform(){
 
 		Body platform;
@@ -167,13 +200,23 @@ public class RocketRetrieval extends ApplicationAdapter {
 
 	}
 
+	public OrthographicCamera getCamera(){
+
+		return camera;
+	}
+
+	public SpriteBatch getBatch(){
+		return batch;
+	}
+
 	@Override
 	public void dispose() {
+		gsm.dispose();
 		batch.dispose();
 		img.dispose();
 		boxDebug.dispose();
 		world.dispose();
-		rocketSprite.dispose();
+		//rocketSprite.dispose();
 		rocketTexture.dispose();
 	}
 }
