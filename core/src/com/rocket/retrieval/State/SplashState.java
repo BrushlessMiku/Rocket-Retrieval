@@ -36,7 +36,7 @@ public class SplashState extends GameState {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         app.getBatch().setProjectionMatrix(app.getCamera().combined);
         app.getBatch().begin();
-        app.getBatch().draw(tex,Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        app.getBatch().draw(tex,0,0);
         app.getBatch().end();
 
 
