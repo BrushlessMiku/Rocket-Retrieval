@@ -45,9 +45,7 @@ public class GameStateManager {
     }
 
     public void resize(int w, int h){
-
         states.peek().resize(w, h);
-
     }
 
     public void setState(State state){
