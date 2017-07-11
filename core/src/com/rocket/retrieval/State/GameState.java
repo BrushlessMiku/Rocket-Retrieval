@@ -16,8 +16,6 @@ public abstract class GameState {
         app = gsm.application();
         batch = app.getBatch();
         camera = app.getCamera();
-        //camera.setToOrtho(false,10,10);
-        //System.out.println("potato");
 
     }
 
